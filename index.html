@@ -472,7 +472,7 @@
   // duplicate-reference checking and automatic logging to your Google Sheet.
   // Until this is set, the form still verifies amount + shows the receipt,
   // it just won't check for reused reference numbers across submissions.
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5oFSV_FVyN50sLLwxGlKvC57xF5xyKLvkEpdrQxdJSG9MPGWPhELoTlfj-D0QXzbMPg/exec';
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPTh_sxFixo78KclubhukAWF9LBGcOGb4mvpyjaAMofw1cvSzvDU-N2NyHNzjXeCBL/exec';
 
   var form = document.getElementById('orderForm');
   var itemCards = document.querySelectorAll('.item-card');
@@ -593,6 +593,7 @@
 
     var refPatterns = [
       /ref(?:erence)?\.?\s*(?:no\.?|number)?\s*[:\-]?\s*([A-Za-z0-9]{6,20})/i,
+      /confirmation\s*(?:no\.?|number)?\s*[:\-]?\s*([A-Za-z0-9]{6,20})/i,
       /rrn\s*[:\-]?\s*([A-Za-z0-9]{6,20})/i,
       /trace\s*(?:no\.?|number)?\s*[:\-]?\s*([A-Za-z0-9]{6,20})/i,
       /transaction\s*(?:id|no\.?|number)?\s*[:\-]?\s*([A-Za-z0-9]{6,20})/i
@@ -618,8 +619,8 @@
   // Soft check only — flags for your review, never blocks a submission.
   // OCR can miss text that's genuinely there, so this is a signal, not a verdict.
   function checkAccountMatch(text){
-    var hasName = /jcc\s*apps/i.test(text);
-    var hasAcctTail = /\b\d{0,3}739\b/.test(text);
+    var hasName = /jcc\s*apps/i.test(text) || /app\s*sells?/i.test(text);
+    var hasAcctTail = /[x\*•]{3,}\D{0,3}739/i.test(text) || /\b739\b/.test(text);
     if(hasName && hasAcctTail) return 'MATCHED';
     if(hasName || hasAcctTail) return 'PARTIAL';
     return 'NOT_DETECTED';
