@@ -305,6 +305,22 @@
     background:var(--yellow-pale); border:1px solid #E9CE7E;
     font-size:14px; color:var(--text-dark-muted); line-height:1.5;
   }
+  .access-block{
+    margin-top:18px; padding:18px 16px; border-radius:12px;
+    background:#E9F7EE; border:1px solid #B6E3C4;
+  }
+  .access-block .access-msg{
+    font-size:15px; font-weight:700; color:#1E7A3D; line-height:1.5; margin-bottom:14px;
+  }
+  .access-link{
+    display:block; text-align:center; min-height:48px;
+    background:var(--yellow); color:var(--navy-deep);
+    border:2px solid var(--yellow-deep); border-radius:10px;
+    font-weight:700; font-size:15px; letter-spacing:0.5px;
+    text-decoration:none; padding:13px 10px; margin-bottom:10px;
+    box-shadow:0 0 0 1px rgba(244,196,48,0.35), 0 4px 14px rgba(244,196,48,0.25);
+  }
+  .access-link:last-child{margin-bottom:0;}
   .ticket-actions{padding:0 24px 26px;}
 
   footer{
@@ -450,6 +466,10 @@
         <div class="ticket-note" id="cfNote">
           Keep your Order ID and Reference Number for follow-up.
         </div>
+        <div class="access-block" id="accessBlock" style="display:none;">
+          <div class="access-msg">Your payment has been confirmed. You may now access the app. Thank you for the trust!</div>
+          <div id="accessLinks"></div>
+        </div>
       </div>
       <div class="ticket-actions">
         <button type="button" class="btn ghost" id="newOrderBtn">Submit Another Order</button>
@@ -467,6 +487,10 @@
 (function(){
   var PRICES = { summarizer: 999, appsell: 999, both: 1998 };
   var LABELS = { summarizer: 'Summarizer', appsell: 'App Sell', both: 'Both — Summarizer + App Sell' };
+  var APP_LINKS = {
+    summarizer: { label: 'OPEN PROPOSAL SUMMARIZER', url: 'https://jccbusinesssolutions.github.io/PROPOSAL-SUMMARIZER/' },
+    appsell: { label: 'OPEN APP SELL', url: 'https://jccbusinesssolutions.github.io/Appsells/' }
+  };
 
   // Paste your deployed Google Apps Script Web App URL here to enable
   // duplicate-reference checking and automatic logging to your Google Sheet.
@@ -676,6 +700,18 @@
       .catch(function(){ return { status: 'NETWORK_ERROR' }; });
   }
 
+  function renderAccessLinks(itemKey){
+    var keysToShow = itemKey === 'both' ? ['summarizer', 'appsell'] : [itemKey];
+    var linksHtml = '';
+    keysToShow.forEach(function(key){
+      var app = APP_LINKS[key];
+      if(!app) return;
+      linksHtml += '<a class="access-link" href="' + app.url + '" target="_blank" rel="noopener">' + app.label + '</a>';
+    });
+    document.getElementById('accessLinks').innerHTML = linksHtml;
+    document.getElementById('accessBlock').style.display = linksHtml ? 'block' : 'none';
+  }
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     hideAlert();
@@ -747,6 +783,8 @@
         ? 'Your payment has been logged and verified against our records. Keep your Order ID and Reference Number for follow-up.'
         : 'Keep your Order ID and Reference Number for follow-up. (Verification server not yet connected — reference uniqueness was not checked.)';
 
+      renderAccessLinks(selectedItem);
+
       document.getElementById('formScreen').classList.add('hide');
       document.getElementById('confirmScreen').classList.add('show');
       window.scrollTo(0,0);
@@ -765,6 +803,8 @@
     ocrStatus.className = 'ocr-status';
     ocrStatus.textContent = '';
     accountMatchResult = 'NOT_SCANNED';
+    document.getElementById('accessBlock').style.display = 'none';
+    document.getElementById('accessLinks').innerHTML = '';
     hideAlert();
     updateTotal();
     document.getElementById('confirmScreen').classList.remove('show');
