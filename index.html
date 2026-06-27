@@ -82,8 +82,8 @@
     color:var(--yellow); font-size:12px; letter-spacing:2px;
     text-transform:uppercase; font-weight:700; margin-bottom:10px;
   }
-  .hero h1{font-size:32px; color:#000000; line-height:1.25;}
-  .hero p{color:#000000; font-size:16.5px; margin-top:10px; opacity:0.9;}
+  .hero h1{font-size:32px; color:#FFFFFF; line-height:1.25;}
+  .hero p{color:#FFFFFF; font-size:16.5px; margin-top:10px; opacity:0.9;}
 
   .card{
     background:var(--navy-card);
@@ -499,7 +499,8 @@
   var APP_LINKS = {
     summarizer: { label: 'OPEN PROPOSAL SUMMARIZER', url: 'https://jccbusinesssolutions.github.io/PROPOSAL-SUMMARIZER/' },
     appsell: { label: 'OPEN APP SELL', url: 'https://jccbusinesssolutions.github.io/Appsells/' },
-    clientpulse: { label: 'OPEN CLIENT PULSE', url: 'PASTE_CLIENT_PULSE_GITHUB_PAGES_URL_HERE' }
+    clientpulse: { label: 'OPEN CLIENT PULSE', url: 'https://jccbusinesssolutions.github.io/JCCDUESREMINDER/' },
+    clientpulsesetup: { label: 'CLIENT PULSE SETUP GUIDE', url: 'https://jccbusinesssolutions.github.io/CLIENT-PULSE-SETUP-GUIDE/' }
   };
 
   // Paste your deployed Google Apps Script Web App URL here to enable
@@ -724,9 +725,11 @@
   function renderAccessLinks(itemKey){
     var keysToShow;
     if(itemKey === 'bothapps'){
-      keysToShow = ['summarizer', 'appsell', 'clientpulse'];
+      keysToShow = ['summarizer', 'appsell', 'clientpulse', 'clientpulsesetup'];
     } else if(itemKey === 'summarizer'){
       keysToShow = ['summarizer', 'appsell'];
+    } else if(itemKey === 'clientpulse'){
+      keysToShow = ['clientpulse', 'clientpulsesetup'];
     } else {
       keysToShow = [itemKey];
     }
