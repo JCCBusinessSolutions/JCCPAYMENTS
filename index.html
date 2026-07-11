@@ -859,8 +859,19 @@
         showAlert('warn', 'We could not reach the verification server. Please check your connection and try again.');
         return;
       }
+      if(result.status === 'UNDERPAID'){
+        showAlert('warn', (result.message || 'Amount sent is less than the required total.') + ' This order is NOT PAID — please send the remaining balance and submit again.');
+        return;
+      }
+      if(result.status === 'ERROR'){
+        showAlert('warn', 'Something went wrong verifying your payment: ' + (result.message || 'Unknown error') + '. Your payment was NOT recorded — please try again or contact support with your reference number (' + refVal + ').');
+        return;
+      }
 
       var loggedRemotely = (result.status === 'PAID' || result.status === 'LOGGED');
+      // Only ever reach this confirmation screen on a genuine PAID/LOGGED result now —
+      // every other status is handled above and returns before this point.
+      document.getElementById('cfStatus').textContent = loggedRemotely ? 'PAID' : 'RECEIVED';
 
       document.getElementById('cfOrderId').textContent = orderId;
       document.getElementById('cfRef').textContent = refVal;
