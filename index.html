@@ -411,25 +411,28 @@
         <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
         <div class="err" id="errEmail">Please enter a valid email.</div>
 
+        <label class="field-label" for="branchName">Branch Name</label>
+        <input type="text" id="branchName" placeholder="e.g. Neem Tree NBO" autocomplete="organization">
+
         <label class="field-label">Item(s)</label>
         <div class="items">
           <label class="item-card selected" data-key="summarizer">
             <input type="radio" name="item" value="summarizer" checked>
             <div class="name">Proposal Summarizer</div>
-            <div class="price">₱1,998</div>
+            <div class="price">₱1,999</div>
             <div class="bonus-free">+ APP SELL ACCESS — FREE</div>
           </label>
           <label class="item-card" data-key="clientpulse">
             <input type="radio" name="item" value="clientpulse">
             <div class="name">Client Pulse</div>
             <div class="desc">Auto Dues Reminder + Birthday Greetings</div>
-            <div class="price">₱1,998</div>
+            <div class="price">₱1,999</div>
           </label>
           <label class="item-card both" data-key="bothapps">
             <input type="radio" name="item" value="bothapps">
             <div class="name">Both Apps</div>
             <div class="desc">Proposal Summarizer + Client Pulse</div>
-            <div class="price">₱3,996</div>
+            <div class="price">₱3,998</div>
             <div class="bonus-free">+ APP SELL ACCESS — FREE</div>
           </label>
         </div>
@@ -439,11 +442,6 @@
           <div class="label">Total Amount Due</div>
           <div class="amount" id="totalAmount">₱0</div>
         </div>
-        <div class="policy-check">
-          <input type="checkbox" id="policyAgree">
-          <label for="policyAgree"><a href="https://jccbusinesssolutions.github.io/POLICYAGREEMENTS/" target="_blank" rel="noopener">READ AND SIGNED POLICY AGREEMENT BEFORE PAYMENT</a></label>
-        </div>
-        <div class="err" id="errPolicy">Please read and confirm the policy agreement before proceeding.</div>
       </div>
 
       <div class="card">
@@ -494,7 +492,7 @@
         <div class="err" id="errRef">Please enter your payment reference number.</div>
 
         <label class="field-label" for="amountSent">Amount Sent</label>
-        <input type="number" id="amountSent" placeholder="1998" min="0" step="1">
+        <input type="number" id="amountSent" placeholder="1999" min="0" step="1">
         <div class="err" id="errAmount">Please enter the amount you sent.</div>
       </div>
 
@@ -547,7 +545,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 (function(){
-  var PRICES = { summarizer: 1998, clientpulse: 1998, bothapps: 3996 };
+  var PRICES = { summarizer: 1999, clientpulse: 1999, bothapps: 3998 };
   var LABELS = { summarizer: 'Proposal Summarizer (+ App Sell FREE)', clientpulse: 'Client Pulse (Auto Dues Reminder + Birthday Greetings)', bothapps: 'Both Apps — Proposal Summarizer + Client Pulse (+ App Sell FREE)' };
   var APP_LINKS = {
     summarizer: { label: 'OPEN PROPOSAL SUMMARIZER', url: 'https://jccbusinesssolutions.github.io/PROPOSAL-SUMMARIZER/' },
@@ -802,6 +800,7 @@
 
     var nameVal = document.getElementById('fullName').value.trim();
     var emailVal = document.getElementById('email').value.trim();
+    var branchVal = document.getElementById('branchName').value.trim();
     var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
     var refVal = refNumberInput.value.trim();
     var amountVal = parseFloat(amountSentInput.value);
@@ -814,7 +813,6 @@
     if(!refVal){ showErr('errRef'); valid = false; } else { hideErr('errRef'); }
     if(!amountVal || amountVal <= 0){ showErr('errAmount'); valid = false; } else { hideErr('errAmount'); }
     if(!uploadedFileName){ showErr('errFile'); valid = false; }
-    if(!document.getElementById('policyAgree').checked){ showErr('errPolicy'); valid = false; } else { hideErr('errPolicy'); }
 
     if(!valid) return;
 
@@ -838,6 +836,7 @@
       orderId: orderId,
       name: nameVal,
       email: emailVal,
+      branchName: branchVal,
       item: LABELS[selectedItem],
       itemKey: selectedItem,
       requiredAmount: requiredAmount,
@@ -905,7 +904,6 @@
     ocrStatus.className = 'ocr-status';
     ocrStatus.textContent = '';
     accountMatchResult = 'NOT_SCANNED';
-    hideErr('errPolicy');
     document.getElementById('accessBlock').style.display = 'none';
     document.getElementById('accessLinks').innerHTML = '';
     hideAlert();
