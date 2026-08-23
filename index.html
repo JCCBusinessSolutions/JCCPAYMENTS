@@ -655,8 +655,8 @@
         }
 
         var acctNote = accountMatchResult === 'MATCHED'
-          ? ' ACCOUNT NUMBER (...739) MATCHED.'
-          : ' COULD NOT FIND ACCOUNT NUMBER ENDING IN 739 ON THIS RECEIPT — THIS ORDER WILL BE BLOCKED UNTIL THIS IS CONFIRMED.';
+          ? ' ACCOUNT (JCC APPS ...4739) MATCHED.'
+          : ' COULD NOT FIND ACCOUNT NUMBER ENDING IN 4739 OR THE NAME "JCC APPS" ON THIS RECEIPT — THIS ORDER WILL BE BLOCKED UNTIL THIS IS CONFIRMED.';
 
         if(gotRef && gotAmount){
           setOcrStatus(accountMatchResult === 'MATCHED' ? 'found' : 'miss', 'AUTO-FILLED REFERENCE NO. AND AMOUNT.' + acctNote);
@@ -702,9 +702,18 @@
 
   // Soft check only — flags for your review, never blocks a submission.
   // OCR can miss text that's genuinely there, so this is a signal, not a verdict.
+  // Matches either the masked BPI receipt format (••••••••4739) or a
+  // GCash/other-app "relayed" receipt that prints the account tail plainly
+  // (e.g. "Account No. •••••••4739") — digits may sit directly next to the
+  // mask characters with no separator, so no \D requirement between them.
+  // Also treats the account name "JCC APPS" appearing anywhere as a match,
+  // since some receipts show the name but crop/blur the account number.
   function checkAccountMatch(text){
-    var hasAcctTail = /[x\*•]{3,}\D{0,3}739/i.test(text) || /\b739\b/.test(text);
-    return hasAcctTail ? 'MATCHED' : 'NOT_DETECTED';
+    var hasAcctTail = /[x\*•]{3,}\D{0,3}4739/i.test(text)
+      || /\b4739\b/.test(text)
+      || /4739/.test(text);
+    var hasAcctName = /JCC\s*APPS/i.test(text);
+    return (hasAcctTail || hasAcctName) ? 'MATCHED' : 'NOT_DETECTED';
   }
 
   removeFile.addEventListener('click', function(e){
@@ -818,7 +827,7 @@
 
     // ---- Account number check: block if "...739" wasn't found on the receipt ----
     if(accountMatchResult !== 'MATCHED'){
-      showAlert('warn', 'WE COULD NOT CONFIRM THIS PAYMENT WAS SENT TO THE CORRECT ACCOUNT (ENDING IN 739). PLEASE DOUBLE-CHECK YOUR RECEIPT, OR UPLOAD A CLEARER SCREENSHOT SHOWING THE FULL ACCOUNT NUMBER, THEN TRY AGAIN.');
+      showAlert('warn', 'WE COULD NOT CONFIRM THIS PAYMENT WAS SENT TO THE CORRECT ACCOUNT (JCC APPS, ENDING IN 4739). PLEASE DOUBLE-CHECK YOUR RECEIPT, OR UPLOAD A CLEARER SCREENSHOT SHOWING THE FULL ACCOUNT NUMBER OR ACCOUNT NAME, THEN TRY AGAIN.');
       return;
     }
 
